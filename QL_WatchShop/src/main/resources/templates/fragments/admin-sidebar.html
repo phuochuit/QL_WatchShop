@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="admin_sidebar">
+
+    <style>
+        body { margin: 0; }
+
+        .admin-sidebar {
+            width: 260px;
+            background-color: #2c3e50;
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            left: 0; top: 0;
+            padding-top: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            z-index: 1000;
+        }
+        .admin-sidebar .logo {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 20px;
+        }
+        .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+        .sidebar-menu li a {
+            display: block;
+            padding: 15px 25px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active {
+            background-color: #34495e;
+            color: white;
+            border-left: 4px solid #e74c3c;
+        }
+    </style>
+
+    <div class="admin-sidebar">
+        <div class="logo">⌚ WATCH SHOP ADMIN</div>
+        <ul class="sidebar-menu">
+            <li><a th:href="@{/admin/dashboard}" th:classappend="${activePage == 'dashboard' ? 'active' : ''}">📊 Bảng điều khiển</a></li>
+            <li><a th:href="@{/admin/product}" th:classappend="${activePage == 'products' ? 'active' : ''}">📦 Quản lý sản phẩm</a></li>
+            <li><a th:href="@{/admin/attributes}" th:classappend="${activePage == 'categories' ? 'active' : ''}">📂 Quản lý danh mục</a></li>
+            <li><a th:href="@{/admin/order}" th:classappend="${activePage == 'orders' ? 'active' : ''}">🛒 Quản lý đơn hàng</a></li>
+            <li><a th:href="@{/admin/user}" th:classappend="${activePage == 'users' ? 'active' : ''}">👥 Quản lý người dùng</a></li>
+            <li><a th:href="@{/admin/reviews}" th:classappend="${activePage == 'reviews' ? 'active' : ''}">💬 Quản lý đánh giá</a></li>
+            <li><a th:href="@{/admin/coupons}" th:classappend="${activePage == 'coupons' ? 'active' : ''}">🎟️ Quản lý mã giảm giá</a></li>
+            <li style="margin-top: 50px;"><a th:href="@{/}" style="color: #e74c3c;">← Thoát trang Admin</a></li>
+        </ul>
+    </div>
+
+</div>
+</body>
+</html>

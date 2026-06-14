@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/web_layout :: main_web_layout(${pageTitle != null ? pageTitle : 'Danh mục Sản Phẩm'}, ~{:: #category-content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="category-content">
+
+    <style>
+        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .product-card { background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; transition: transform 0.3s; border: 1px solid #eee; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .product-img { width: 100%; height: 250px; object-fit: contain; margin-bottom: 15px; }
+        .product-info { text-align: left; }
+        .brand-tag { font-size: 12px; color: #7f8c8d; margin-bottom: 5px; }
+        .product-name { font-size: 15px; color: #333; margin-bottom: 10px; height: 40px; overflow: hidden; font-weight: bold;}
+        .product-price { font-size: 18px; font-weight: bold; color: #e74c3c; margin-bottom: 10px; }
+
+        .quick-brand-box { padding: 10px 20px; border: 1px solid #e0e0e0; background: white; cursor: pointer; transition: all 0.2s; font-weight: bold; font-size: 14px; color: #004085; text-transform: uppercase; border-radius: 4px; }
+        .quick-brand-box:hover { border-color: #3498db; box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2); }
+        .quick-brand-box.active { border-color: #3498db; color: #3498db; border-width: 2px; }
+
+        .quick-pill { padding: 8px 18px; border: 1px solid #d1d8e0; border-radius: 20px; background: white; cursor: pointer; transition: all 0.2s; font-size: 13px; color: #555; }
+        .quick-pill:hover { border-color: #3498db; color: #3498db; }
+        .quick-pill.active { border-color: #3498db; color: #3498db; font-weight: bold; }
+
+        input[type=range]::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; width: 20px; height: 20px; background: #3498db; border-radius: 50%; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+    </style>
+
+    <div class="container" style="min-height: 60vh; padding-top: 30px;">
+
+        <h1 style="text-align: center; margin: 20px 0;">Kết quả tìm kiếm: <span th:text="${keyword}"></span></h1>
+
+        <div class="product-grid">
+            <div th:each="p : ${products}" class="product-item">
+            </div>
+        </div>
+
+        <div class="product-grid">
+            <div class="product-card" th:each="product : ${products}">
+                <a th:href="@{'/san-pham/' + ${product.id}}" style="text-decoration: none; color: inherit; display: block;">
+
+                    <img th:src="${!product.images.isEmpty() ? (product.images[0].localImageUrl != null ? product.images[0].localImageUrl : product.images[0].imageUrl) : 'https://via.placeholder.com/250'}"
+                         class="product-img" alt="Watch">
+
+                    <div class="product-info">
+                        <div class="brand-tag">
+                            🏷️ <span th:text="${product.brand.name}">Casio</span>
+                        </div>
+                        <div class="product-name" th:text="${product.name}">Tên sản phẩm</div>
+                        <div class="product-price"
+                             th:text="${#numbers.formatDecimal(product.originalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                            1.500.000đ
+                        </div>
+                    </div>
+
+                </a>
+            </div>
+
+            <div class="empty-message" th:if="${products.isEmpty()}"
+                 style="grid-column: span 4; text-align: center; padding: 50px; font-size: 18px; color: #7f8c8d; background: white; border: 1px dashed #ccc; border-radius: 8px;">
+                Không tìm thấy sản phẩm nào phù hợp với bộ lọc của bạn.
+                <br>
+                <a th:href="${submitUrl}"
+                   style="color: #3498db; text-decoration: underline; font-size: 15px; display: inline-block; margin-top: 10px;">Xóa
+                    bộ lọc</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleAdvancedFilter() {
+            const panel = document.getElementById("advancedFilterPanel");
+            const icon = document.getElementById("filterIcon");
+            if (panel.style.display === "none" || panel.style.display === "") {
+                panel.style.display = "block";
+                icon.innerText = "△";
+            } else {
+                panel.style.display = "none";
+                icon.innerText = "▽";
+            }
+        }
+
+        const minSlider = document.getElementById("minPriceSlider");
+        const maxSlider = document.getElementById("maxPriceSlider");
+        const minLabel = document.getElementById("minPriceLabel");
+        const maxLabel = document.getElementById("maxPriceLabel");
+
+        function formatVND(value) {
+            return new Intl.NumberFormat('vi-VN').format(value) + 'đ';
+        }
+
+        function updatePriceLabels() {
+            if (parseInt(minSlider.value) > parseInt(maxSlider.value)) {
+                let temp = minSlider.value;
+                minSlider.value = maxSlider.value;
+                maxSlider.value = temp;
+            }
+            minLabel.innerText = formatVND(minSlider.value);
+            maxLabel.innerText = formatVND(maxSlider.value);
+        }
+
+        minSlider.addEventListener("input", updatePriceLabels);
+        maxSlider.addEventListener("input", updatePriceLabels);
+
+        updatePriceLabels();
+    </script>
+
+</div>
+</body>
+</html>

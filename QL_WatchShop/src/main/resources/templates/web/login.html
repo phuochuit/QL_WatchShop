@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
+        button { width: 100%; padding: 10px; background-color: #e74c3c; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold;}
+        button:hover { background-color: #c0392b; }
+        .alert-error { color: #c0392b; background: #fadbd8; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px;}
+        .alert-success { color: #27ae60; background: #d5f5e3; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px;}
+    </style>
+</head>
+<body>
+<div class="auth-box">
+    <h2>ĐĂNG NHẬP</h2>
+
+    <div th:if="${param.error}" class="alert-error">Sai email hoặc mật khẩu!</div>
+    <div th:if="${param.registerSuccess}" class="alert-success">Đăng ký thành công. Hãy đăng nhập!</div>
+
+    <form th:action="@{/login}" method="post">
+        <input type="email" name="email" placeholder="Email của bạn" required>
+        <input type="password" name="password" placeholder="Mật khẩu" required>
+        <button type="submit">ĐĂNG NHẬP</button>
+    </form>
+
+    <p style="margin-top: 20px; font-size: 14px;">Chưa có tài khoản? <a href="/register" style="color: #3498db; text-decoration: none;">Đăng ký ngay</a></p>
+    <div style="text-align: right; margin-bottom: 15px;">
+        <a th:href="@{/forgot-password}" style="color: #3498db; text-decoration: none; font-size: 14px;">Quên mật khẩu?</a>
+    </div>
+</div>
+</body>
+</html>

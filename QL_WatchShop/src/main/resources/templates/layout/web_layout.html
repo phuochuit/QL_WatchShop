@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html th:fragment="main_web_layout(title, content)" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">WATCH SHOP</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body { margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        main { flex: 1; }
+
+        .cart-floating-btn {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 60px; height: 60px; background: #e74c3c;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 999; text-decoration: none;
+        }
+
+        .cart-floating-btn .badge {
+            position: absolute; top: 0; right: 0;
+            background: #2c3e50; border: 2px solid white;
+            width: 22px; height: 22px; border-radius: 50%;
+            font-size: 12px; display: flex; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header-menu}"></div>
+
+<main>
+    <div th:replace="${content}"></div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer-menu}"></div>
+
+<a th:href="@{/cart}" class="cart-floating-btn">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span class="badge" th:text="${session.totalQuantity != null ? session.totalQuantity : 0}">0</span>
+</a>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/admin_layout :: main_layout('Quản lý Đánh giá', ~{:: #main-content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="main-content">
+  <div class="container">
+    <h2 style="margin: 0 0 20px 0; color: #2c3e50;">💬 QUẢN LÝ ĐÁNH GIÁ</h2>
+
+    <div th:if="${successMessage}" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+      <span th:text="${successMessage}"></span>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Sản phẩm</th>
+        <th>Khách hàng</th>
+        <th>Số sao</th>
+        <th>Nội dung bình luận</th>
+        <th>Thời gian</th>
+        <th>Hành động</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="r : ${reviews}">
+        <td th:text="${r.id}">1</td>
+        <td style="font-weight: bold;" th:text="${r.product != null ? r.product.name : 'Đã xóa SP'}">Đồng hồ Casio</td>
+        <td th:text="${r.user != null ? r.user.fullName : 'Vô danh'}">Khách A</td>
+        <td style="color: #f39c12;" th:text="${r.rating} + ' ⭐'">5 ⭐</td>
+        <td style="text-align: left; max-width: 300px; white-space: normal;" th:text="${r.comment}">Đẹp quá shop ơi</td>
+        <td th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+        <td>
+          <form th:action="@{/admin/reviews/delete}" method="post" style="margin: 0;">
+            <input type="hidden" name="id" th:value="${r.id}">
+            <button type="submit"
+                    style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;"
+                    onclick="return confirm('Bạn có chắc chắn muốn XÓA VĨNH VIỄN đánh giá này không?');">
+              🗑️ Xóa
+            </button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/web_layout :: main_web_layout('Thông tin cá nhân', ~{:: #profile-content})}"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="profile-content">
+  <style>
+    .profile-container { max-width: 600px; margin: 50px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+    .profile-title { color: #2c3e50; font-size: 24px; margin-bottom: 30px; text-align: center; font-weight: bold; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; font-size: 14px; }
+    .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+    .form-control:focus { border-color: #3498db; outline: none; box-shadow: 0 0 5px rgba(52,152,219,0.2); }
+    .form-control:disabled { background: #f9f9f9; cursor: not-allowed; }
+    .btn-save { background: #e74c3c; color: white; border: none; width: 100%; padding: 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; }
+    .btn-save:hover { background: #c0392b; }
+    .alert-success { background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #c3e6cb; }
+  </style>
+
+  <div class="profile-container">
+    <h2 class="profile-title">👤 THÔNG TIN CÁ NHÂN</h2>
+
+    <div th:if="${successMessage}" class="alert-success">
+      ✅ <span th:text="${successMessage}"></span>
+    </div>
+
+    <form th:action="@{/user/profile/update}" method="post">
+      <div class="form-group">
+        <label>Địa chỉ Email (Tài khoản)</label>
+        <input type="text" class="form-control" th:value="${user.email}" disabled>
+        <small style="color: #999;">* Email không thể thay đổi</small>
+      </div>
+
+      <div class="form-group">
+        <label>Họ và Tên</label>
+        <input type="text" name="fullName" class="form-control" th:value="${user.fullName}" required>
+      </div>
+
+      <div class="form-group">
+        <label>Số điện thoại</label>
+        <input type="text" name="phone" class="form-control" th:value="${user.phone}" required>
+      </div>
+
+      <button type="submit" class="btn-save">LƯU THAY ĐỔI</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <a th:href="@{/user/orders}" style="color: #3498db; text-decoration: none; font-size: 14px;">← Xem lịch sử mua hàng</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

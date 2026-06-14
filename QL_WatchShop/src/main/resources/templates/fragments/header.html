@@ -1,0 +1,440 @@
+<header th:fragment="header-menu" class="site-header">
+    <style>
+        .top-bar { overflow: visible !important; position: relative; z-index: 1000; }
+        .auth-buttons { overflow: visible !important; }
+        .site-header { position: relative; z-index: 9999; }
+
+        .user-dropdown { position: relative; display: inline-block; cursor: pointer; padding: 10px 0; }
+        .user-name { color: #555; font-size: 14px; padding: 5px 10px; transition: 0.3s; }
+
+        .user-dropdown:hover .user-name {
+            color: #e74c3c;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            min-width: 220px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            z-index: 9999;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .dropdown-content a, .dropdown-content button {
+            color: #333;
+            padding: 12px 20px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            transition: 0.2s;
+            width: 100%;
+            text-align: left;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .dropdown-content a:hover, .dropdown-content button:hover {
+            background-color: #f8f9fa;
+            color: #3498db;
+            padding-left: 25px; /* Hiệu ứng thụt lề */
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <span>HOTLINE: <strong>0902.678.910</strong></span>
+            <span class="store-icon">📍 HỆ THỐNG CỬA HÀNG</span>
+        </div>
+
+        <div xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+            <div class="auth-buttons" style="display: flex; align-items: center; gap: 15px; margin-right: 30px;">
+
+                <div sec:authorize="isAnonymous()" style="display: flex; gap: 10px">
+                    <a th:href="@{/login}" class="btn-auth">Đăng nhập</a>
+                    <a th:href="@{/register}" class="btn-auth outline">Đăng ký</a>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" class="user-dropdown">
+                    <span class="user-name">
+                        Chào, <strong sec:authentication="principal.username">User</strong>! <span
+                            style="font-size: 12px;">▼</span>
+                    </span>
+
+                    <div class="dropdown-content">
+                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}"
+                           style="color: #2980b9; font-weight: bold; background: #f4f6f9;">
+                            ⚙️ QUẢN LÝ CỬA HÀNG
+                        </a>
+
+                        <a th:href="@{/user/orders}">📦 Lịch sử mua hàng</a>
+                        <a th:href="@{/user/profile}">👤 Thông tin cá nhân</a>
+                        <a href="/user/change-password">🔑 Đổi mật khẩu</a>
+
+                        <hr style="margin: 5px 0; border: none; border-top: 1px solid #eee;">
+
+                        <form th:action="@{/logout}" method="post" style="margin: 0;">
+                            <button type="submit"
+                                    style="background: none; border: none; color: #e74c3c; cursor: pointer; font-weight: bold;">
+                                🚪 Thoát
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="main-nav-wrapper">
+        <div class="container">
+            <nav class="main-nav">
+                <ul class="nav-links left-links">
+                    <li class="has-dropdown">
+                        <a href="#">BÁN CHẠY <span class="arrow">⌄</span></a>
+
+                        <ul class="simple-dropdown">
+                            <li><a href="#">› Casio Hot</a></li>
+                            <li><a href="#">› Pierre Lannier Hot</a></li>
+                            <li><a href="#">› Daniel Wellington Hot</a></li>
+                            <li><a href="#">› Olym Pianus Hot</a></li>
+                            <li><a href="#">› Orient Hot</a></li>
+                            <li><a href="#">› Citizen Hot</a></li>
+                            <li><a href="#">› Olympia Star Hot</a></li>
+                            <li><a href="#">› Seiko Hot</a></li>
+                            <li><a href="#">› Edifice Hot</a></li>
+                            <li><a href="#">› G-Shock Hot</a></li>
+                            <li><a href="#">› Percent Hot</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-mega-menu">
+                        <a href="#">THƯƠNG HIỆU <span class="arrow">⌄</span></a>
+
+                        <div class="mega-menu">
+                            <div class="mega-menu-inner container">
+                                <div class="menu-column">
+                                    <h3>ĐỒNG HỒ NHẬT BẢN</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="/thuong-hieu/Casio">› Casio <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#">› Casio Edifice <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#">› Casio G-Shock <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#">› Orient <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Citizen</a></li>
+                                        <li><a href="/thuong-hieu/Seiko">› Seiko</a></li>
+                                    </ul>
+                                </div>
+                                <div class="menu-column">
+                                    <h3>ĐỒNG HỒ CHÂU ÂU</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Pierre Lannier <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#">› Daniel Wellington <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#">› Calvin Klein <span class="badge sale">SALE</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="menu-column">
+                                    <h3>ĐỒNG HỒ THỤY SỸ</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Tissot <span class="badge sale">SALE</span></a>
+                                        </li>
+                                        <li><a href="#">› Olympia Star</a></li>
+                                        <li>
+                                            <a href="#">› Ogival <span class="badge sale">SALE</span></a>
+                                        </li>
+                                    </ul>
+                                    <h3 class="mt-20">ĐỒNG HỒ TREO TƯỜNG</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Karlsson <span class="badge new">NEW</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="menu-column">
+                                    <h3>DÂY DA ĐỒNG HỒ</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Dây Da Percent <span class="badge hot">HOT</span></a>
+                                        </li>
+                                    </ul>
+                                    <h3 class="mt-20">ĐỒNG HỒ KHUYẾN MÃI</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Candino <span class="badge sale">SALE</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="has-mega-menu">
+                        <a href="/danh-muc/nam">NAM <span class="arrow">⌄</span></a>
+
+                        <div class="mega-menu">
+                            <div class="mega-menu-inner container">
+                                <div class="menu-column">
+                                    <ul class="quick-links mt-20">
+                                        <li><a href="#">› BÁN CHẠY</a></li>
+                                        <li><a href="#">› MẪU MỚI</a></li>
+                                        <li><a href="#">› SALE</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>LOẠI MÁY</h3>
+                                    <ul>
+                                        <li><a href="#">› Pin (Quartz)</a></li>
+                                        <li><a href="#">› Cơ Tự Động (Automatic)</a></li>
+                                        <li><a href="#">› Eco-Drive</a></li>
+                                        <li><a href="#">› Điện Tử</a></li>
+                                    </ul>
+                                    <h3 class="mt-20">CHẤT LIỆU</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Dây da <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Dây inox</a></li>
+                                        <li><a href="#">› Dây Lưới</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>KHOẢNG GIÁ</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Dưới 1 Triệu <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#">› Dưới 2 Triệu <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Dưới 3 Triệu</a></li>
+                                        <li><a href="#">› Dưới 4 Triệu</a></li>
+                                        <li><a href="#">› Dưới 5 Triệu</a></li>
+                                        <li><a href="#">› Dưới 6 Triệu</a></li>
+                                        <li><a href="#">› Dưới 7 Triệu</a></li>
+                                        <li><a href="#">› Đồng Hồ Nam Cao Cấp</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>THƯƠNG HIỆU</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Casio <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Casio Edifice</a></li>
+                                        <li><a href="#">› Casio G-Shock</a></li>
+                                        <li><a href="#">› Casio MTP</a></li>
+                                        <li>
+                                            <a href="#">› Pierre Lannier <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Olym Pianus</a></li>
+                                        <li><a href="#">› Orient</a></li>
+                                        <li><a href="#">› Citizen</a></li>
+                                        <li><a href="#">› Daniel Wellington</a></li>
+                                        <li><a href="#">› Seiko</a></li>
+                                        <li><a href="#">› MVMT</a></li>
+                                        <li><a href="#">› Olympia Star</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="has-mega-menu">
+                        <a href="/danh-muc/Nữ">NỮ <span class="arrow">⌄</span></a>
+
+                        <div class="mega-menu">
+                            <div class="mega-menu-inner container">
+                                <div class="menu-column">
+                                    <ul class="quick-links mt-20">
+                                        <li><a href="#">› BÁN CHẠY</a></li>
+                                        <li><a href="#">› MẪU MỚI</a></li>
+                                        <li><a href="#">› SALE</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>LOẠI MÁY</h3>
+                                    <ul>
+                                        <li><a href="#">› Pin (Quartz)</a></li>
+                                        <li><a href="#">› Cơ Tự Động (Automatic)</a></li>
+                                        <li><a href="#">› Eco-Drive</a></li>
+                                        <li><a href="#">› Điện Tử</a></li>
+                                    </ul>
+                                    <h3 class="mt-20">CHẤT LIỆU</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Dây da <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Dây inox</a></li>
+                                        <li><a href="#">› Dây Lưới</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>KHOẢNG GIÁ</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Dưới 1 Triệu <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li>
+                                            <a href="#">› Dưới 2 Triệu <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Dưới 3 Triệu</a></li>
+                                        <li><a href="#">› Dưới 4 Triệu</a></li>
+                                        <li><a href="#">› Dưới 5 Triệu</a></li>
+                                        <li><a href="#">› Dưới 6 Triệu</a></li>
+                                        <li><a href="#">› Dưới 7 Triệu</a></li>
+                                        <li><a href="#">› Đồng Hồ Nữ Cao Cấp</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>THƯƠNG HIỆU</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Casio <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Casio LTP</a></li>
+                                        <li>
+                                            <a href="#">› Pierre Lannier <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Olym Pianus</a></li>
+                                        <li><a href="#">› Orient</a></li>
+                                        <li><a href="#">› Citizen</a></li>
+                                        <li>
+                                            <a href="#">› Daniel Wellington<span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Seiko</a></li>
+                                        <li><a href="#">› MVMT</a></li>
+                                        <li><a href="#">› Olympia Star</a></li>
+                                        <li><a href="#">› Skagen</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="logo">
+                    <a href="/">
+                        <span class="logo-text">SHOPDONGHO<span class="logo-dot">.COM</span></span>
+                    </a>
+                </div>
+
+                <ul class="nav-links right-links">
+                    <li class="has-dropdown">
+                        <a href="#">ĐÔI <span class="arrow">⌄</span></a>
+
+                        <ul class="simple-dropdown">
+                            <li><a href="#">› Đồng Hồ Đôi Casio</a></li>
+                            <li><a href="#">› Đồng Hồ Đôi Sunrise</a></li>
+                            <li><a href="#">› Đồng Hồ Đôi Olym Pianus</a></li>
+                            <li><a href="#">› Đồng Hồ Đôi Citizen</a></li>
+                            <li><a href="#">› Đồng Hồ Đôi Olympia Star</a></li>
+                            <li><a href="#">› Đồng Hồ Đôi Halei</a></li>
+                            <li><a href="#">› Xem Tất Cả Đồng Hồ Đôi</a></li>
+                        </ul>
+                    </li>
+                    <li class="has-mega-menu">
+                        <a href="#">TREO TƯỜNG <span class="arrow">⌄</span></a>
+
+                        <div class="mega-menu">
+                            <div class="mega-menu-inner container">
+                                <div class="menu-column">
+                                    <ul class="quick-links mt-20">
+                                        <li><a href="#">› BÁN CHẠY</a></li>
+                                        <li><a href="#">› MẪU MỚI</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>LOẠI MÁY</h3>
+                                    <ul>
+                                        <li><a href="#">› Pin (Quartz)</a></li>
+                                        <li><a href="#">› Eco-Drive</a></li>
+                                    </ul>
+                                    <h3 class="mt-20">KÍCH THƯỚC VỎ</h3>
+                                    <ul>
+                                        <li><a href="#">› Đường kính 30cm</a></li>
+                                        <li><a href="#">› Đường kính 40cm</a></li>
+                                        <li><a href="#">› Đường kính 50cm</a></li>
+                                        <li><a href="#">› Đường kính 60cm</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>KHOẢNG GIÁ</h3>
+                                    <ul>
+                                        <li>
+                                            <a href="#">› Dưới 1 Triệu <span class="badge hot">HOT</span></a>
+                                        </li>
+                                        <li><a href="#">› Dưới 2 Triệu</a></li>
+                                        <li><a href="#">› Dưới 3 Triệu</a></li>
+                                        <li><a href="#">› Trên 3 Triệu</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="menu-column">
+                                    <h3>TREO TƯỜNG</h3>
+                                    <ul>
+                                        <li><a href="#">› Karlsson</a></li>
+                                        <li><a href="#">› Seiko</a></li>
+                                        <li><a href="#">› Rhythm</a></li>
+                                    </ul>
+                                    <h3 class="mt-20">ĐỂ BÀN</h3>
+                                    <ul>
+                                        <li><a href="#">› Karlsson</a></li>
+                                        <li><a href="#">› Seiko</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <a href="#">SỬA CHỮA <span class="arrow">⌄</span></a>
+
+                        <ul class="simple-dropdown">
+                            <li><a href="#">Thay pin</a></li>
+                            <li><a href="#">Thay kính</a></li>
+                            <li><a href="#">Lau dầu</a></li>
+                            <li><a href="#">Vệ sinh đồng hồ</a></li>
+                            <li><a href="#">Sửa chữa máy</a></li>
+                            <li><a href="#">Đánh bóng</a></li>
+                            <li><a href="#">Bảng giá</a></li>
+                        </ul>
+                    </li>
+                    <form th:action="@{/tim-kiem}" method="get"
+                          style="display: flex; align-items: center; background: white; border-radius: 20px; padding: 2px 10px; border: 1px solid #ddd;">
+                        <input type="text" name="keyword" placeholder="Tìm đồng hồ..."
+                               style="border: none; outline: none; padding: 5px; width: 100px; font-size: 13px;">
+                        <button type="submit" style="background: none; border: none; cursor: pointer; color: #555;">🔍
+                        </button>
+                    </form>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>

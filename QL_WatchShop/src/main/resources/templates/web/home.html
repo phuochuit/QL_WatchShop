@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/web_layout :: main_web_layout('Trang Chủ - Watch Shop Chính Hãng', ~{:: #home-content})}"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="home-content">
+
+    <style>
+        .section-header { text-align: center; margin-bottom: 30px; margin-top: 30px;}
+        .section-header h2 { font-size: 28px; text-transform: uppercase; margin-bottom: 10px; }
+        .section-header .line { width: 50px; height: 3px; background-color: #e74c3c; margin: 0 auto 15px auto; }
+        .filter-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .btn-filter { padding: 10px 20px; background-color: #fcf9f2; border: 1px solid #f0e6d2; border-radius: 5px; font-weight: bold; cursor: pointer; text-decoration: none; color: #333; }
+        .btn-filter-outline { padding: 8px 15px; border: 1px solid #3498db; background: transparent; border-radius: 5px; color: #555; text-decoration: none; font-size: 14px; }
+
+        .product-section { padding: 40px 20px; border-radius: 10px; margin-bottom: 40px; }
+        .bg-red { background-color: #f15e5e; }
+        .bg-blue { background-color: #eef7ff; }
+        .product-section h2 { text-align: center; color: white; margin-top: 0; font-size: 24px; margin-bottom: 30px; }
+        .bg-blue h2 { color: #333; }
+
+        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .product-card { background: white; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .product-img { width: 100%; height: 250px; object-fit: contain; margin-bottom: 15px; }
+
+        .product-badge { position: absolute; top: 10px; left: 10px; background: #e74c3c; color: white; padding: 4px 10px; font-size: 12px; border-radius: 20px; font-weight: bold; z-index: 2; }
+        .product-info { text-align: left; }
+        .brand-tag { font-size: 12px; color: #7f8c8d; margin-bottom: 5px; }
+        .product-name { font-size: 15px; color: #333; margin-bottom: 10px; height: 40px; overflow: hidden; }
+        .product-price { font-size: 18px; font-weight: bold; color: #e74c3c; margin-bottom: 10px; }
+        .stars { color: #f1c40f; font-size: 14px; }
+
+        .brand-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+        .brand-box { padding: 15px 30px; border: 1px solid #ddd; font-weight: bold; font-size: 18px; color: #2c3e50; text-transform: uppercase; transition: border-color 0.3s; }
+        .brand-box:hover { border-color: #e74c3c; color: #e74c3c; }
+    </style>
+
+    <div class="container">
+
+        <div class="main-banner-wrapper">
+            <img th:src="@{/images/main-bg.png}" alt="Banner chính" style="width: 100%;">
+        </div>
+
+        <div class="section-header">
+            <h2>ĐỒNG HỒ NAM NỮ CHÍNH HÃNG</h2>
+            <div class="line"></div>
+            <p>Chúng tôi cam kết mang lại những giá trị cao nhất, chế độ hậu mãi tốt nhất khi quý khách hàng tin dùng &
+                mua sắm.</p>
+
+            <div class="filter-tags">
+                <a href="#" class="btn-filter">⌚ NAM</a>
+                <a href="#" class="btn-filter">⌚ NỮ</a>
+                <a href="#" class="btn-filter">👫 CẶP ĐÔI</a>
+                <a href="#" class="btn-filter">🔥 HOT</a>
+                <a href="#" class="btn-filter">🏷️ SALE</a>
+            </div>
+            <div class="filter-tags" style="margin-top: 10px;">
+                <a href="#" class="btn-filter-outline">pin/quartz</a>
+                <a href="#" class="btn-filter-outline">cơ/automatic</a>
+                <a href="#" class="btn-filter-outline">dây da</a>
+                <a href="#" class="btn-filter-outline">dây kim loại</a>
+            </div>
+        </div>
+
+        <div class="product-section bg-red">
+            <h2>ĐỒNG HỒ BÁN CHẠY & ĐẸP</h2>
+            <div class="product-grid">
+                <div class="product-card" th:each="product : ${hotProducts}">
+                    <a th:href="@{'/san-pham/' + ${product.id}}"
+                       style="text-decoration: none; color: inherit; display: block; position: relative;">
+
+                        <div class="product-badge">BÁN CHẠY</div>
+
+                        <img th:if="${product.images == null or product.images.isEmpty()}"
+                             src="https://via.placeholder.com/250" class="product-img" alt="Watch">
+                        <img th:unless="${product.images == null or product.images.isEmpty()}"
+                             th:src="${product.images[0].localImageUrl != null ? product.images[0].localImageUrl : product.images[0].imageUrl}"
+                             class="product-img" alt="Watch">
+
+                        <div class="product-info">
+                            <div class="brand-tag">
+                                ❤️ <span
+                                    th:text="${product.category != null ? product.category.name : 'Đang cập nhật'}">Nam</span><br>
+                                🏷️ <span
+                                    th:text="${product.brand != null ? product.brand.name : 'Đang cập nhật'}">Casio</span>
+                            </div>
+                            <div class="product-name" th:text="${product.name}">Tên sản phẩm</div>
+
+                            <div class="product-price"
+                                 th:text="${product.originalPrice != null ? #numbers.formatDecimal(product.originalPrice, 0, 'COMMA', 0, 'POINT') + 'đ' : 'Liên hệ'}">
+                                1.500.000đ
+                            </div>
+                            <div class="stars">
+                            <span th:if="${#lists.size(product.reviews) > 0}">
+                                <span style="color: #f39c12; font-size: 16px;">
+                                    <span th:each="i : ${#numbers.sequence(1, T(java.lang.Math).round(product.averageRating))}">⭐</span>
+                                </span>
+                                <span style="color: #555; margin-left: 5px; font-weight: bold; font-size: 12px;"
+                                      th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)} + '/5 (' + ${#lists.size(product.reviews)} + ')'">
+                                </span>
+                            </span>
+                                <span th:if="${#lists.size(product.reviews) == 0}">
+                                    <span style="color: #ccc; font-size: 16px;">⭐⭐⭐⭐⭐</span>
+                                    <span style="color: #999; margin-left: 5px; font-size: 12px;">(Chưa có)</span>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="product-section bg-blue">
+            <h2>ĐỒNG HỒ CASIO</h2>
+            <div class="product-grid">
+                <div class="product-card" th:each="product : ${casioProducts}">
+                    <a th:href="@{'/san-pham/' + ${product.id}}"
+                       style="text-decoration: none; color: inherit; display: block;">
+
+                        <img th:if="${product.images == null or product.images.isEmpty()}"
+                             src="https://via.placeholder.com/250" class="product-img" alt="Watch">
+                        <img th:unless="${product.images == null or product.images.isEmpty()}"
+                             th:src="${product.images[0].localImageUrl != null ? product.images[0].localImageUrl : product.images[0].imageUrl}"
+                             class="product-img" alt="Watch">
+
+                        <div class="product-info">
+                            <div class="brand-tag">
+                                ❤️ <span
+                                    th:text="${product.category != null ? product.category.name : 'Đang cập nhật'}">Nam</span><br>
+                                🏷️ <span
+                                    th:text="${product.brand != null ? product.brand.name : 'Đang cập nhật'}">Casio</span>
+                            </div>
+                            <div class="product-name" th:text="${product.name}">Tên sản phẩm</div>
+
+                            <div class="product-price"
+                                 th:text="${product.originalPrice != null ? #numbers.formatDecimal(product.originalPrice, 0, 'COMMA', 0, 'POINT') + 'đ' : 'Liên hệ'}">
+                                1.500.000đ
+                            </div>
+                            <span th:if="${#lists.size(product.reviews) > 0}">
+                                <span style="color: #f39c12; font-size: 16px;">
+                                    <span th:each="i : ${#numbers.sequence(1, T(java.lang.Math).round(product.averageRating))}">⭐</span>
+                                </span>
+                                <span style="color: #555; margin-left: 5px; font-weight: bold; font-size: 12px;"
+                                      th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)} + '/5 (' + ${#lists.size(product.reviews)} + ')'">
+                                </span>
+                            </span>
+
+                            <span th:if="${#lists.size(product.reviews) == 0}">
+                                <span style="color: #ccc; font-size: 16px;">⭐⭐⭐⭐⭐</span>
+                                <span style="color: #999; margin-left: 5px; font-size: 12px;">(Chưa có)</span>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

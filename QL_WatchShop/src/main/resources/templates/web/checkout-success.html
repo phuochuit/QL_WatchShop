@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/web_layout :: main_web_layout('Đặt hàng thành công', ~{:: #success-content})}"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="success-content">
+    <style>
+        .success-wrapper { max-width: 800px; margin: 50px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+        .success-icon { font-size: 70px; color: #2ecc71; margin-bottom: 20px; }
+        .order-info-box { text-align: left; background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 30px 0; border: 1px solid #eee; }
+        .product-table { width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left; }
+        .product-table th { padding: 12px; border-bottom: 2px solid #eee; color: #7f8c8d; font-size: 14px; }
+        .product-table td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .product-img { width: 60px; height: 60px; object-fit: contain; border: 1px solid #ddd; border-radius: 4px; background: white; }
+        .total-row { font-size: 20px; font-weight: bold; color: #e74c3c; text-align: right; padding-top: 20px; }
+    </style>
+
+    <div class="success-wrapper">
+        <div class="success-icon">✅</div>
+        <h2 style="color: #2c3e50; margin-bottom: 10px;">ĐẶT HÀNG THÀNH CÔNG!</h2>
+        <p style="color: #7f8c8d;">Cảm ơn bạn đã tin tưởng Watch Shop. Đơn hàng của bạn đang được xử lý.</p>
+
+        <div class="order-info-box" th:if="${order != null}">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Mã đơn hàng:</span>
+                <strong th:text="'#' + ${order.id}">#123</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Ngày đặt:</span>
+                <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Người nhận:</span>
+                <span th:text="${order.shippingAddress}"></span>
+            </div>
+
+            <table class="product-table">
+                <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th style="text-align: right;">Giá</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detail : ${orderDetails}">
+                    <td style="display: flex; align-items: center; gap: 15px;">
+                        <img th:src="${!detail.product.images.isEmpty() ? (detail.product.images[0].localImageUrl != null ? detail.product.images[0].localImageUrl : detail.product.images[0].imageUrl) : ''}"
+                             class="product-img">
+                        <span th:text="${detail.product.name}" style="font-weight: bold; color: #333;"></span>
+                    </td>
+                    <td th:text="'x' + ${detail.quantity}">x1</td>
+                    <td style="text-align: right; font-weight: bold; color: #555;"
+                        th:text="${#numbers.formatDecimal(detail.price, 0, 'COMMA', 0, 'POINT')} + 'đ'"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="total-row">
+                TỔNG CỘNG: <span
+                    th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center;">
+            <a th:href="@{/}"
+               style="background: #3498db; color: white; padding: 12px 30px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                TIẾP TỤC MUA SẮM
+            </a>
+            <a th:href="@{/user/orders}"
+               style="background: #f4f6f9; color: #555; padding: 12px 30px; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                XEM ĐƠN HÀNG
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

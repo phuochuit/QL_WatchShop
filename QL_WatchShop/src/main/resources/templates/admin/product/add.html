@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/admin_layout :: main_layout('Thêm Sản Phẩm Mới', ~{:: #add-content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="add-content">
+    <style>
+        .custom-container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .row { display: flex; gap: 15px; }
+        .col { flex: 1; }
+        .btn-submit { background-color: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px; font-weight: bold;}
+        .btn-submit:hover { background-color: #218838; }
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        .image-list-container { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px; padding: 15px; background: #f8f9fa; border: 1px dashed #ccc; border-radius: 5px; min-height: 120px;}
+        .img-box { position: relative; width: 100px; height: 100px; border: 1px solid #ddd; border-radius: 4px; background: #fff; display: flex; align-items: center; justify-content: center;}
+        .img-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .primary-label { position: absolute; bottom: 0; width: 100%; text-align: center; font-size: 10px; color: white; padding: 3px 0; }
+    </style>
+
+    <div class="custom-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin:0; color: #333;">➕ THÊM ĐỒNG HỒ MỚI</h2>
+            <a href="/admin/product" style="text-decoration: none; color: #007bff; font-weight: bold;">← Quay lại danh sách</a>
+        </div>
+
+        <div th:if="${param.success}" class="alert alert-success">Thêm sản phẩm thành công!</div>
+        <div th:if="${param.error}" class="alert alert-error">Có lỗi xảy ra, vui lòng thử lại!</div>
+
+        <form th:action="@{/admin/product/add}" th:object="${product}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Tên đồng hồ</label>
+                <input type="text" th:field="*{name}" required placeholder="Ví dụ: Casio G-Shock GA-2100">
+            </div>
+
+            <div class="row">
+                <div class="form-group col">
+                    <label>Giá gốc (VNĐ)</label>
+                    <input type="number" th:field="*{originalPrice}" required>
+                </div>
+                <div class="form-group col">
+                    <label>Số lượng kho</label>
+                    <input type="number" th:field="*{stockQuantity}" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col">
+                    <label>Danh mục</label>
+                    <select name="categoryId" required>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                    </select>
+                </div>
+                <div class="form-group col">
+                    <label>Thương hiệu</label>
+                    <select name="brandId" required>
+                        <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col">
+                    <label>Loại máy</label>
+                    <select name="movementTypeId" required>
+                        <option th:each="mov : ${movementTypes}" th:value="${mov.id}" th:text="${mov.name}"></option>
+                    </select>
+                </div>
+                <div class="form-group col">
+                    <label>Chất liệu dây</label>
+                    <select name="materialId" required>
+                        <option th:each="mat : ${materials}" th:value="${mat.id}" th:text="${mat.name}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; margin-bottom: 20px; background: #fff;">
+                <h4 style="margin-top: 0; margin-bottom: 15px;">🖼️ TẢI LÊN HÌNH ẢNH</h4>
+                <div class="row">
+                    <div class="form-group col">
+                        <label style="color: #28a745;">Ảnh chính đại diện (Bắt buộc)</label>
+                        <input type="file" name="mainImage" accept="image/*" required style="border: 1px solid #28a745; background: #f8fff9;" onchange="previewImages(this, 'mainPreview')">
+                        <small style="color: #666;">Ảnh này sẽ hiển thị ngoài trang chủ và danh mục.</small>
+                        <div class="image-list-container" id="mainPreview" style="display: none; min-height: unset; padding: 10px; margin-top: 10px;"></div>
+                    </div>
+                    <div class="form-group col">
+                        <label style="color: #17a2b8;">Các ảnh phụ chi tiết (Không bắt buộc)</label>
+                        <input type="file" name="extraImages" accept="image/*" multiple style="border: 1px solid #17a2b8; background: #f4fbff;" onchange="previewImages(this, 'extraPreview')">
+                        <small style="color: #666;">Nhấn giữ phím Ctrl để chọn nhiều ảnh cùng lúc.</small>
+                        <div class="image-list-container" id="extraPreview" style="display: none; min-height: unset; padding: 10px; margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Mô tả ngắn gọn</label>
+                <textarea th:field="*{description}" rows="5"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">LƯU SẢN PHẨM MỚI</button>
+        </form>
+    </div>
+
+    <script>
+        function previewImages(input, previewBoxId) {
+            const previewBox = document.getElementById(previewBoxId);
+            previewBox.innerHTML = '';
+            if (input.files && input.files.length > 0) {
+                previewBox.style.display = 'flex';
+                for (let file of input.files) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let div = document.createElement('div');
+                        div.className = 'img-box';
+                        div.style.cursor = 'default';
+                        let labelText = previewBoxId === 'mainPreview' ? 'ẢNH CHÍNH' : 'ẢNH PHỤ';
+                        let labelColor = previewBoxId === 'mainPreview' ? 'rgba(40, 167, 69, 0.9)' : 'rgba(23, 162, 184, 0.9)';
+                        div.innerHTML = `<img src="${e.target.result}"> <div class="primary-label" style="background:${labelColor}">${labelText}</div>`;
+                        previewBox.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                previewBox.style.display = 'none';
+            }
+        }
+    </script>
+</div>
+
+</body>
+</html>

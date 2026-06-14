@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/web_layout :: main_web_layout(${product != null ? 'Đồng hồ ' + product.brand.name + ' ' + product.name : 'Chi tiết sản phẩm'}, ~{:: #product-content})}"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="product-content">
+    <style>
+        .product-detail-wrapper { display: flex; gap: 40px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 30px; }
+        .col-left { flex: 1; max-width: 50%; }
+        .col-right { flex: 1; }
+
+        .main-image-box { position: relative; border: 1px solid #eee; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 15px; height: 450px; display: flex; align-items: center; justify-content: center; overflow: hidden;}
+        .main-image-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .fade-anim { animation: fadeInImg 0.5s ease-in-out; }
+        @keyframes fadeInImg {
+            0% { opacity: 0.3; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.2); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; transition: 0.3s; z-index: 10; display: flex; align-items: center; justify-content: center;}
+        .nav-btn:hover { background: rgba(231, 76, 60, 0.8); }
+        .nav-btn.left { left: 10px; }
+        .nav-btn.right { right: 10px; }
+
+        .thumbnail-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .thumb-item { width: 80px; height: 80px; border: 1px solid #ddd; border-radius: 4px; padding: 5px; cursor: pointer; transition: 0.2s; }
+        .thumb-item:hover, .thumb-item.active { border-color: #3498db; box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); }
+        .thumb-item img { width: 100%; height: 100%; object-fit: contain; }
+
+        .product-title { font-size: 26px; color: #111; margin-top: 0; margin-bottom: 10px; font-weight: bold; line-height: 1.3;}
+        .product-stars { color: #e74c3c; font-size: 16px; margin-bottom: 15px; }
+        .product-price { font-size: 28px; color: #111; font-weight: bold; margin-bottom: 20px; text-align: center; padding: 15px 0; border-bottom: 1px solid #eee;}
+        .stock-status { color: #27ae60; font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 5px; margin-bottom: 15px; }
+        .product-desc { font-size: 15px; line-height: 1.6; color: #444; margin-bottom: 20px; }
+        .product-code { font-size: 15px; color: #333; margin-bottom: 20px; }
+        .btn-buy { background-color: #d32f2f; color: white; border: none; width: 100%; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s; text-transform: uppercase;}
+        .btn-buy:hover { background-color: #b71c1c; }
+    </style>
+
+    <div class="container" style="min-height: 60vh;">
+
+        <div class="product-detail-wrapper" th:if="${product != null}">
+
+            <div class="col-left">
+                <div class="main-image-box">
+                    <button class="nav-btn left" th:if="${product.images.size() > 1}" onclick="prevImg()">&#10094;
+                    </button>
+
+                    <img id="mainImage"
+                         th:src="${!product.images.isEmpty() ? (product.images[0].localImageUrl != null ? product.images[0].localImageUrl : product.images[0].imageUrl) : 'https://via.placeholder.com/500'}"
+                         alt="Product Image">
+
+                    <button class="nav-btn right" th:if="${product.images.size() > 1}" onclick="nextImg()">&#10095;
+                    </button>
+                </div>
+
+                <div class="thumbnail-list" th:if="${!product.images.isEmpty()}">
+                    <div class="thumb-item" th:each="img, iterStat : ${product.images}"
+                         th:classappend="${iterStat.index == 0} ? 'active' : ''"
+                         th:data-src="${img.localImageUrl != null ? img.localImageUrl : img.imageUrl}"
+                         th:onclick="'changeImageByIndex(' + ${iterStat.index} + ')'">
+                        <img th:src="${img.localImageUrl != null ? img.localImageUrl : img.imageUrl}">
+                    </div>
+                </div>
+
+                <div th:if="${product.images.isEmpty()}"
+                     style="text-align: center; color: #999; font-style: italic; font-size: 13px;">
+                    (Sản phẩm chưa có hình phụ)
+                </div>
+            </div>
+
+            <div class="col-right">
+                <h1 class="product-title">
+                    Đồng Hồ
+                    <span th:text="${product.brand != null ? product.brand.name : ''}">Casio</span>
+                    <span th:text="${product.category != null ? product.category.name : ''}">Nam</span>
+                    <span th:text="${product.name}">W-800H-1AVDF</span>
+                </h1>
+
+                <div style="font-size: 14px; margin-bottom: 15px;">
+                    <span th:if="${totalReviews > 0}">
+                        <span style="color: #f39c12; font-size: 16px;">
+                            <span th:each="i : ${#numbers.sequence(1, T(java.lang.Math).round(averageRating))}">⭐</span>
+                        </span>
+                        <span style="color: #555; margin-left: 5px; font-weight: bold;"
+                              th:text="${#numbers.formatDecimal(averageRating, 1, 1)} + '/5 (' + ${totalReviews} + ' đánh giá)'">
+                        </span>
+                    </span>
+
+                    <span th:if="${totalReviews == 0}" style="color: #999; font-style: italic;">
+                        Chưa có đánh giá nào
+                    </span>
+                </div>
+
+                <div class="product-price"
+                     th:text="${product.originalPrice != null ? #numbers.formatDecimal(product.originalPrice, 0, 'COMMA', 0, 'POINT') + 'đ' : 'Liên hệ'}">
+                    1.014.000đ
+                </div>
+
+                <div style="margin-bottom: 15px; font-size: 16px;">
+                    <span th:if="${product.stockQuantity > 0}" style="color: #27ae60; font-weight: bold;">
+                        ✔️ SẴN HÀNG (Còn <span th:text="${product.stockQuantity}"></span> sản phẩm)
+                    </span>
+
+                    <span th:if="${product.stockQuantity <= 0}" style="color: #e74c3c; font-weight: bold;">
+                        ❌ HẾT HÀNG
+                    </span>
+                </div>
+
+                <p class="product-desc" th:if="${product.description != null and !product.description.isEmpty()}"
+                   th:text="${product.description}">Đồng hồ điện tử với nhiều tính năng...</p>
+                <p class="product-code">Mã sản phẩm: <strong th:text="${product.name}">W-800H-1AVDF</strong></p>
+
+                <div style="margin-bottom: 20px; font-size: 14px;">
+                    💥 <strong style="color: #0056b3;">GIẢM 50K KHI MUA TRẢ SAU</strong> ❓<br>
+                    Trả sau đến 12 tháng với <strong>Fundiin</strong> ❓
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button th:if="${product.stockQuantity <= 0}"
+                            disabled
+                            style="background: #bdc3c7; color: #7f8c8d; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 4px; cursor: not-allowed;">
+                        🔒 SẢN PHẨM TẠM HẾT HÀNG
+                    </button>
+
+                    <div th:if="${product.stockQuantity > 0}">
+                        <div sec:authorize="isAnonymous()">
+                            <a th:href="@{'/yeu-cau-dang-nhap/' + ${product.id}}" class="btn-buy"
+                               style="display: block; text-decoration: none; text-align: center; background: #d32f2f; color: white; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 4px; box-sizing: border-box;">
+                                🛒 THÊM VÀO GIỎ HÀNG
+                            </a>
+                        </div>
+
+                        <div sec:authorize="isAuthenticated()">
+                            <form th:action="@{/cart/add}" method="post">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <button type="submit" class="btn-buy"
+                                        style="background: #d32f2f; color: white; border: none; padding: 15px; width: 100%; font-size: 18px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: 0.3s;"
+                                        onmouseover="this.style.background='#c0392b'"
+                                        onmouseout="this.style.background='#d32f2f'">
+                                    🛒 THÊM VÀO GIỎ HÀNG
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px;">
+            <h3 style="color: #2c3e50;">⭐ ĐÁNH GIÁ SẢN PHẨM</h3>
+
+            <div th:if="${successMessage}"
+                 style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 15px;"
+                 th:text="${successMessage}"></div>
+
+            <div sec:authorize="isAuthenticated()"
+                 style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                <form th:action="@{/product/review}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-weight: bold;">Chất lượng sản phẩm:</label>
+                        <select name="rating"
+                                style="padding: 8px; border-radius: 4px; margin-left: 10px; border: 1px solid #ccc;">
+                            <option value="5">⭐⭐⭐⭐⭐ Tuyệt vời</option>
+                            <option value="4">⭐⭐⭐⭐ Tốt</option>
+                            <option value="3">⭐⭐⭐ Bình thường</option>
+                            <option value="2">⭐⭐ Tạm được</option>
+                            <option value="1">⭐ Rất tệ</option>
+                        </select>
+                    </div>
+
+                    <textarea name="comment" rows="3" placeholder="Hãy chia sẻ cảm nhận của bạn về sản phẩm này nhé..."
+                              required
+                              style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; margin-bottom: 10px; box-sizing: border-box;"></textarea>
+
+                    <button type="submit"
+                            style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                        GỬI ĐÁNH GIÁ
+                    </button>
+                </form>
+            </div>
+
+            <div sec:authorize="isAnonymous()"
+                 style="background: #fdf0ed; padding: 15px; border-radius: 8px; margin-bottom: 30px; text-align: center;">
+                Vui lòng <a th:href="@{/login}" style="color: #e74c3c; font-weight: bold;">Đăng nhập</a> để viết đánh
+                giá
+                cho sản phẩm này.
+            </div>
+
+            <div>
+                <div th:if="${#lists.isEmpty(reviews)}" style="color: #7f8c8d; font-style: italic;">
+                    Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!
+                </div>
+
+                <div th:each="r : ${reviews}" style="border-bottom: 1px dashed #ddd; padding: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <strong style="color: #3498db;" th:text="${r.user.fullName}">Nguyễn Văn A</strong>
+                        <span style="color: #999; font-size: 12px;"
+                              th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    </div>
+                    <div style="color: #f39c12; margin-bottom: 5px;">
+                        <span th:each="i : ${#numbers.sequence(1, r.rating)}">⭐</span>
+                    </div>
+                    <p style="margin: 0; color: #555;" th:text="${r.comment}">Đồng hồ rất đẹp!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentImgIndex = 0;
+        let imgInterval;
+        const thumbs = document.querySelectorAll('.thumb-item');
+        const mainImg = document.getElementById('mainImage');
+
+        function changeImageByIndex(index) {
+            if (thumbs.length === 0) return;
+
+            mainImg.classList.remove('fade-anim');
+            void mainImg.offsetWidth;
+            mainImg.classList.add('fade-anim');
+
+            mainImg.src = thumbs[index].getAttribute('data-src');
+
+            thumbs.forEach(t => t.classList.remove('active'));
+            thumbs[index].classList.add('active');
+
+            currentImgIndex = index;
+            resetImgAutoplay();
+        }
+
+        function nextImg() {
+            let newIndex = currentImgIndex + 1;
+            if (newIndex >= thumbs.length) newIndex = 0;
+            changeImageByIndex(newIndex);
+        }
+
+        function prevImg() {
+            let newIndex = currentImgIndex - 1;
+            if (newIndex < 0) newIndex = thumbs.length - 1;
+            changeImageByIndex(newIndex);
+        }
+
+        function startImgAutoplay() {
+            if (thumbs.length > 1) {
+                imgInterval = setInterval(nextImg, 4000);
+            }
+        }
+
+        function stopImgAutoplay() {
+            clearInterval(imgInterval);
+        }
+
+        function resetImgAutoplay() {
+            stopImgAutoplay();
+            startImgAutoplay();
+        }
+
+        const mainBox = document.querySelector('.main-image-box');
+        if(mainBox) {
+            mainBox.addEventListener('mouseover', stopImgAutoplay);
+            mainBox.addEventListener('mouseout', startImgAutoplay);
+        }
+
+        startImgAutoplay();
+    </script>
+</div>
+
+</body>
+</html>

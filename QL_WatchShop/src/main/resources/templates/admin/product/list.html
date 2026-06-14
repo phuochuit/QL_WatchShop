@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/admin_layout :: main_layout('Quản lý Sản Phẩm', ~{:: #main-content})}"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="main-content">
+    <div class="container">
+        <div class="header-flex">
+            <h2 style="margin: 0; color: #2c3e50;">📦 QUẢN LÝ SẢN PHẨM</h2>
+            <a href="/admin/product/add" class="btn-add">+ THÊM SẢN PHẨM MỚI</a>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Hình ảnh</th>
+                <th style="text-align: left;">Tên sản phẩm</th>
+                <th>Giá bán</th>
+                <th>Kho</th>
+                <th>Hãng</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.id}">1</td>
+                <td>
+                    <img th:if="${!product.images.isEmpty()}"
+                         th:src="${product.images[0].localImageUrl != null ? product.images[0].localImageUrl : product.images[0].imageUrl}"
+                         width="60" height="60"
+                         style="object-fit: contain; border: 1px solid #ddd; border-radius: 4px;">
+                </td>
+                <td style="text-align: left; font-weight: bold;" th:text="${product.name}">Casio G-Shock</td>
+                <td style="color: #e74c3c; font-weight: bold;"
+                    th:text="${#numbers.formatDecimal(product.originalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">1.000.000đ
+                </td>
+                <td>
+                    <span th:if="${product.stockQuantity > 0}" th:text="${product.stockQuantity}">10</span>
+
+                    <span th:if="${product.stockQuantity <= 0}"
+                          style="color: #e74c3c; font-weight: bold; background: #fdf0ed; padding: 4px 8px; border-radius: 4px;">
+                        Hết hàng (0)
+                    </span>
+                </td>
+                <td th:text="${product.brand.name}">Casio</td>
+                <td>
+                    <a th:href="@{'/admin/product/edit/' + ${product.id}}" class="btn-edit">✏️ Sửa</a>
+                    <a th:href="@{'/admin/product/delete/' + ${product.id}}" class="btn-delete"
+                       onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">🗑️ Xóa</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

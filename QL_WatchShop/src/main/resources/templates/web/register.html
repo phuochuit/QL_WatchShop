@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;}
+        button { width: 100%; padding: 10px; background-color: #2ecc71; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; font-weight: bold;}
+        button:hover { background-color: #27ae60; }
+        .alert-error { color: #c0392b; background: #fadbd8; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px;}
+    </style>
+</head>
+<body>
+<div class="auth-box">
+    <h2>TẠO TÀI KHOẢN MỚI</h2>
+
+    <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+
+    <form th:action="@{/register}" th:object="${user}" method="post">
+        <input type="text" th:field="*{fullName}" placeholder="Họ và Tên" required>
+        <input type="email" th:field="*{email}" placeholder="Email" required>
+        <input type="text" th:field="*{phone}" placeholder="Số điện thoại" required>
+        <input type="password" th:field="*{password}" placeholder="Mật khẩu" required minlength="6">
+        <button type="submit">ĐĂNG KÝ</button>
+    </form>
+
+    <p style="margin-top: 20px; font-size: 14px;">Đã có tài khoản? <a href="/login" style="color: #3498db; text-decoration: none;">Đăng nhập</a></p>
+</div>
+</body>
+</html>

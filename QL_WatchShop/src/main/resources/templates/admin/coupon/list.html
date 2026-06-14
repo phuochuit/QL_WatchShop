@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/admin_layout :: main_layout('Quản lý Khuyến mãi', ~{:: #main-content})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="main-content">
+  <div class="container">
+    <h2 style="margin: 0 0 20px 0; color: #2c3e50;">🎟️ QUẢN LÝ MÃ GIẢM GIÁ</h2>
+
+    <div th:if="${successMessage}" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+      <span th:text="${successMessage}"></span>
+    </div>
+
+    <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px;">
+      <h3 style="margin-top: 0; color: #3498db; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">➕ Tạo mã khuyến mãi mới</h3>
+
+      <form th:action="@{/admin/coupons/add}" method="post" style="display: flex; flex-wrap: wrap; gap: 15px;">
+
+        <div style="flex: 1; min-width: 200px;">
+          <label style="font-weight: bold; font-size: 14px;">Mã Code (Để trống sẽ tự tạo ngẫu nhiên):</label>
+          <input type="text" name="code" placeholder="VD: TET2026..." style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; text-transform: uppercase;">
+        </div>
+
+        <div style="flex: 1; min-width: 200px;">
+          <label style="font-weight: bold; font-size: 14px;">Loại giảm giá:</label>
+          <select name="discountType" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+            <option value="PERCENT">Giảm theo Phần trăm (%)</option>
+            <option value="FIXED">Giảm Tiền mặt (VNĐ)</option>
+          </select>
+        </div>
+
+        <div style="flex: 1; min-width: 200px;">
+          <label style="font-weight: bold; font-size: 14px;">Mức giảm (Số % hoặc Số tiền):</label>
+          <input type="number" name="discountValue" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        </div>
+
+        <div style="flex: 1; min-width: 200px;">
+          <label style="font-weight: bold; font-size: 14px;">Đơn tối thiểu áp dụng (VNĐ):</label>
+          <input type="number" name="minOrderAmount" value="0" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        </div>
+
+        <div style="flex: 1; min-width: 200px;">
+          <label style="font-weight: bold; font-size: 14px;">Ngày hết hạn:</label>
+          <input type="date" name="expirationDate" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        </div>
+
+        <div style="width: 100%; margin-top: 10px;">
+          <button type="submit" style="background: #27ae60; color: white; border: none; padding: 12px 25px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 15px;">
+            TẠO MÃ NGAY
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Mã Code</th>
+        <th>Mức Giảm</th>
+        <th>Điều kiện (Đơn Tối Thiểu)</th>
+        <th>Ngày Hết Hạn</th>
+        <th>Trạng Thái</th>
+        <th>Thao Tác</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="c : ${coupons}">
+        <td>
+          <strong style="color: #e74c3c; font-size: 16px; background: #fdf0ed; padding: 5px 10px; border-radius: 4px; border: 1px dashed #e74c3c;" th:text="${c.code}"></strong>
+        </td>
+        <td style="font-weight: bold; color: #2980b9;">
+          <span th:if="${c.discountType == 'PERCENT'}" th:text="'Giảm ' + ${#numbers.formatDecimal(c.discountValue, 0, 0)} + '%'"></span>
+          <span th:if="${c.discountType == 'FIXED'}" th:text="'Giảm ' + ${#numbers.formatDecimal(c.discountValue, 0, 'COMMA', 0, 'POINT')} + 'đ'"></span>
+        </td>
+        <td th:text="${c.minOrderAmount != null and c.minOrderAmount > 0 ? 'Từ ' + #numbers.formatDecimal(c.minOrderAmount, 0, 'COMMA', 0, 'POINT') + 'đ' : 'Mọi đơn hàng'}"></td>
+        <td th:text="${#temporals.format(c.expirationDate, 'dd/MM/yyyy')}"></td>
+        <td>
+          <span th:if="${c.isActive}" style="color: white; background: #27ae60; padding: 5px 10px; border-radius: 4px; font-size: 12px;">Đang Mở</span>
+          <span th:if="${!c.isActive}" style="color: white; background: #95a5a6; padding: 5px 10px; border-radius: 4px; font-size: 12px;">Đã Khóa</span>
+        </td>
+        <td>
+          <a th:href="@{'/admin/coupons/toggle/' + ${c.id}}"
+             th:style="${c.isActive ? 'background: #e74c3c;' : 'background: #27ae60;'}"
+             style="color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 13px;"
+             th:text="${c.isActive ? 'Khóa Lại' : 'Mở Khóa'}">
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
